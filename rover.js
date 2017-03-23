@@ -39,112 +39,8 @@ The rover should execute the given commands until it reaches an obstacle, then s
 
 Our rover is lonely! We need to send another one that can roam on the same grid and execute the same commands.
 Make sure the rovers don’t bump into each other.
-
-
 */
 
-
-/* ITERATION 1
-
-function checkBoundaries(rover, grid){
-  //checks whether the given position is valid
-  if((rover.position[0] < 0 || rover.position[1] < 0) || (rover.position[0] > grid.length - 1 || rover.position[1] > grid.length - 1 )){
-    return false;
-  } else return true;
-
-}
-
-function goForward(rover) {
-  var oldPosition = rover.position.slice(0);
-  switch(rover.direction) {
-    case 'N':
-      rover.position[0]++;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[0]--;
-      }
-      break;
-    case 'E':
-      rover.position[1]++;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[1]--;
-      }
-      break;
-    case 'S':
-      rover.position[0]--;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[0]++;
-      }
-      break;
-    case 'W':
-      rover.position[1]--;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[1]++;
-      }
-      break;
-  }
-  //cleaning the old position and updating the new position in the grid
-  if(oldPosition != rover.position){
-    grid[oldPosition[0]][oldPosition[1]] = " ";
-    updatePosition(rover);
-  }
-
-
-
-
-  console.log("Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
-  viewWorld();
-}
-
-function goBackward(rover) {
-  var oldPosition = rover.position.slice(0);
-  switch(rover.direction) {
-    case 'N':
-      rover.position[0]--;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[0]++;
-      }
-      break;
-    case 'E':
-      rover.position[1]--;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[1]++;
-      }
-      break;
-    case 'S':
-      rover.position[0]++;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[0]--;
-      }
-      break;
-    case 'W':
-      rover.position[1]++;
-      if(!checkBoundaries(rover, grid)){
-        console.log("Can't go there");
-        rover.position[1]--;
-      }
-      break;
-  }
-  //cleaning the old position and updating the new position in the grid
-  if(oldPosition != rover.position){
-    grid[oldPosition[0]][oldPosition[1]] = " ";
-    updatePosition(rover);
-  }
-
-
-
-
-  console.log("Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
-  viewWorld();
-}
-
-*/
 
 function createGrid(size){
   //this function returns a grid size * size
@@ -153,23 +49,22 @@ function createGrid(size){
     grid.push([]);
     for (var j = 0; j < size; j++){
         //placing random obstacles in the grid
-        if(Math.floor(Math.random() * 11) == 10) grid[i].push("*");
+        if(Math.floor(Math.random() * (size + 1)) == size) grid[i].push("*");
         else grid[i].push(" ");
       }
   }
   return grid;
 }
 
-//creating 10*10 grid
-var grid = createGrid(10);
 
 function randomPosition(grid){
   //generates a random position for the rover
-  var pos = [Math.floor(Math.random()* 10), Math.floor(Math.random() * 10)];
+  var pos = [Math.floor(Math.random()* grid.length), Math.floor(Math.random() * grid.length)];
   //checks whether the position generated is free and returns pos, otherwise recalls the function to reroll
   if(!detectObstacle(pos, grid)) return pos;
   else return randomPosition(grid);
 }
+
 
 function randomDirection(){
   //generates a random starting direction
@@ -191,14 +86,12 @@ function randomDirection(){
   return dir;
 }
 
-//rover constructor;
+
 function Rover(){
+  //rover constructor;
   this.position = randomPosition(grid);
   this.direction = randomDirection();
 }
-//generating the 2 rovers
-var myRover = new Rover();
-var rover2 = new Rover();
 
 
 function detectObstacle(position, grid){
@@ -206,11 +99,6 @@ function detectObstacle(position, grid){
   return grid[position[0]][position[1]] != " ";
   }
 
-//initializing the rover in the grid
-updatePosition(myRover);
-updatePosition(rover2);
-
-viewWorld();
 
 function updatePosition(rover){
   //updates rover position in the grid
@@ -230,7 +118,8 @@ function updatePosition(rover){
         break;
   }
   grid[rover.position[0]][rover.position[1]] = arrow;
-       }
+}
+
 
 function goLeft(rover){
   //rotates direction counterclockwise
@@ -273,9 +162,6 @@ function goRight(rover){
  }
 
 
-
-
-
 function correctPosition(rover, grid){
   //this function adjust the rover position near the grid borders
   if(rover.position[0] < 0) rover.position[0] = grid.length - 1;
@@ -284,6 +170,7 @@ function correctPosition(rover, grid){
   if(rover.position[1] > grid.length - 1) rover.position[1] = 0;
 
 }
+
 
 function goForward(rover) {
   var changed = 0;
@@ -312,11 +199,10 @@ function goForward(rover) {
     updatePosition(rover);
     changed = 1;
   }
-
-  console.log("Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
   //returns wether the position has changed(1) or not(0)
   return changed;
 }
+
 
 function goBackward(rover) {
   var changed = 0;
@@ -346,11 +232,10 @@ function goBackward(rover) {
     updatePosition(rover);
     changed = 1;
   }
-
-  console.log("Rover Position: [" + rover.position[0] + ", " + rover.position[1] + "]");
   //returns wether the position has changed(1) or not(0)
   return changed;
 }
+
 
 function viewWorld(){
   //visualize the grid
@@ -362,36 +247,54 @@ function viewWorld(){
    }
 }
 
+
+function exec(command){
+  //this function access the string via bracket notation and execs the commands given if they're present in the switch cases (f b l r)
+  var keepGoing = [1, 1];
+  for (var i = 0; i < command.length; i++){
+    for (var j = 0; j < roverArray.length; j++){
+      if (keepGoing[j] == 1){
+        switch(command[i]){
+          case "f":
+            keepGoing[j] = goForward(roverArray[j]);
+            break;
+          case "b":
+            keepGoing[j] = goBackward(roverArray[j]);
+            break;
+          case "l":
+            goLeft(roverArray[j]);
+            break;
+          case "r":
+            goRight(roverArray[j]);
+            break;
+
+        }
+        console.log("Rover " + j + " Position: [" + roverArray[j].position[0] + ", " + roverArray[j].position[1] + "]");
+      }
+    }
+    viewWorld();
+    if (!keepGoing[0] && !keepGoing[1]) break;
+  }
+
+}
+
+//creating 10*10 grid
+var grid = createGrid(10);
+
+//generating the 2 rovers
+var roverArray = [];
+roverArray.push(new Rover());
+roverArray.push(new Rover());
+
+
+//initializing the rover in the grid
+updatePosition(roverArray[0]);
+updatePosition(roverArray[1]);
+
+
+viewWorld();
+
 //converts the user input to a lowercase string
 var commands = String(prompt("Type f for go forward, b for go back, r for turn right, l for turn left, you can input multiple commands eg. \"fflrbb\"")).toLowerCase();
 
-
-function execCommands(command){
-  //this function access the string via bracket notation and execs the commands given if they're present in the switch cases (f b l r)
-  //rover2 added on the go, i'll submit a better function tomorrow.
-  for (var i = 0; i < command.length; i++){
-    var keepGoing1 = 1, keepGoing2 = 1;
-    viewWorld();
-    switch (command[i]){
-        case "f":
-            if(keepGoing1) keepGoing1 = goForward(myRover);
-            if(keepGoing2) keepGoing2 = goForward(rover2);
-            break;
-        case "b":
-            if(keepGoing1) keepGoing1 = goBackward(myRover);
-            if(keepGoing2) keepGoing2 = goBackward(rover2);
-            break;
-        case "l":
-            goLeft(myRover);
-            goLeft(rover2);
-            break;
-        case "r":
-            goRight(myRover);
-            goLeft(rover2);
-            break;
-  }
-    if(!keepGoing1 && !keepGoing2) break;
-  }
-}
-
-execCommands(commands);
+exec(commands);
