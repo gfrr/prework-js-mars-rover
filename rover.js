@@ -172,30 +172,16 @@ function correctPosition(rover, grid){
 }
 
 
-function goForward(rover) {
-  var changed = 0;
-  var oldPosition = rover.position.slice(0);
-  switch(rover.direction) {
-    case 'N':
-      rover.position[0]++;
-      break;
-    case 'E':
-      rover.position[1]++;
-      break;
-    case 'S':
-      rover.position[0]--;
-      break;
-    case 'W':
-      rover.position[1]--;
-      break;
-  }
+function confirmChange(oldPos, rover, grid) {
   //cleaning the old position and updating the new position in the grid
+  var changed = 0;
   correctPosition(rover, grid);
-  if(detectObstacle(rover.position, grid)){
-    rover.position = oldPosition;
+  if(detectObstacle(rover.position, grid)) {
     console.log("Obstacle ahead detected, cannot proceed.");
-  } else {
-    grid[oldPosition[0]][oldPosition[1]] = " ";
+    rover.position = oldPos;
+  }
+  else {
+    grid[oldPos[0]][oldPos[1]] = " ";
     updatePosition(rover);
     changed = 1;
   }
@@ -204,8 +190,27 @@ function goForward(rover) {
 }
 
 
+function goForward(rover) {
+  var oldPosition = rover.position.slice(0);
+  switch(rover.direction) {
+    case 'N':
+      rover.position[0]++;
+      break;
+    case 'E':
+      rover.position[1]++;
+      break;
+    case 'S':
+      rover.position[0]--;
+      break;
+    case 'W':
+      rover.position[1]--;
+      break;
+  }
+  return confirmChange(oldPosition, rover, grid);
+}
+
+
 function goBackward(rover) {
-  var changed = 0;
   var oldPosition = rover.position.slice(0);
   switch(rover.direction) {
     case 'N':
@@ -221,19 +226,7 @@ function goBackward(rover) {
       rover.position[1]++;
       break;
   }
-  //cleaning the old position and updating the new position in the grid
-  correctPosition(rover, grid);
-  if(detectObstacle(rover.position, grid)) {
-    console.log("Obstacle ahead detected, cannot proceed.");
-    rover.position = oldPosition;
-  }
-  else {
-    grid[oldPosition[0]][oldPosition[1]] = " ";
-    updatePosition(rover);
-    changed = 1;
-  }
-  //returns wether the position has changed(1) or not(0)
-  return changed;
+  return confirmChange(oldPosition, rover, grid);
 }
 
 
